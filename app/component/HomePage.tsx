@@ -1,51 +1,15 @@
+"use client";
 import React from "react";
 import MainTask from "./MainTask";
+import { usePersistStore } from "@/zustand";
 
 const HomePage = () => {
-  const example = [
-    {
-      id: 1,
-      title: "excalitask.com",
-      tasks: [
-        { title: "Main item 1", isComplete: false, task: [], isSubtask: false },
-        { title: "Main item 2", isComplete: false, task: [], isSubtask: false },
-        {
-          title: "Main item 3",
-          isComplete: false,
-          tasks: [
-            { title: "sub item 1", isComplete: false, task: [] },
-            { title: "sub item 2", isComplete: false, task: [] },
-            { title: "sub item 3", isComplete: false, task: [] },
-            { title: "sub item 4", isComplete: false, task: [] },
-          ],
-          isSubtask: true,
-        },
-        { title: "Main item 4", isComplete: false, task: [], isSubtask: false },
-      ],
-    },
-    // {
-    //   id: 2,
-    //   title: "sumdigit.com",
-    //   tasks: [
-    //     { title: "create target number", isComplete: false, task: [], isSubtask: false },
-    //     { title: "generate new data", isComplete: false, task: [], isSubtask: false },
-    //     {
-    //       title: "generate list",
-    //       isComplete: false,
-    //       tasks: [
-    //         { title: "next app", isComplete: false, task: [] },
-    //         { title: "next app", isComplete: false, task: [] },
-    //       ],
-    //       isSubtask: true,
-    //     },
-    //   ],
-    // },
-  ];
-
+  const { tasksMain, setTaskMain } = usePersistStore();
+  console.log("tasksMain", tasksMain);
   return (
-    <div className=" flex flex-col gap-4">
-      {example.map((tasks, i) => (
-        <MainTask key={`${i}-task`} task={tasks} />
+    <div className=" flex flex-wrap gap-4">
+      {tasksMain.map((tasks, i) => (
+        <MainTask key={tasks.id} task={tasks} />
       ))}
     </div>
   );

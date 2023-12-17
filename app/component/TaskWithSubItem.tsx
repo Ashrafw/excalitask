@@ -16,7 +16,7 @@ const TaskWithSubItem = ({ task }) => {
         <IoIosArrowDown />
       </div>
       <div className="flex flex-col ml-8 border-l rounded-lg text-[16px] ">
-        {task.tasks?.map((item) => (
+        {task.subTaskList?.map((item) => (
           <SubItem subTask={item} />
         ))}
       </div>

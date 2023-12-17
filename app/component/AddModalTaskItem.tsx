@@ -1,80 +1,101 @@
+"use client";
 import { v4 as uuidv4 } from "uuid";
 import { PiArrowElbowRightDownFill } from "react-icons/pi";
 import AddSubTaskItem from "./AddSubTaskItem";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaChevronUp } from "react-icons/fa6";
 import { FaChevronDown } from "react-icons/fa6";
 import { MdOutlineMoreVert } from "react-icons/md";
+import { letters } from "../helper/alphabet";
 
-const mainTaskTemplate = {
-  title: "",
-  isComplete: false,
-  tasks: [],
-  isSubtask: false,
+type SubTaskType = {
+  id: string;
+  title: string;
+  isComplete: boolean;
+  isSubtask: boolean;
 };
-const letters = [
-  "A",
-  "B",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-  "I",
-  "J",
-  "K",
-  "L",
-  "M",
-  "N",
-  "O",
-  "P",
-  "Q",
-  "R",
-  "S",
-  "T",
-  "U",
-  "V",
-  "W",
-  "X",
-  "Y",
-  "Z",
-];
-// const alphabetLetters = letters?;
+type taskType = {
+  id: string;
+  title: string;
+  isComplete: boolean;
+  subTaskList: SubTaskType[];
+  isSubtask: boolean;
+};
+type AddModalTaskItemType = {
+  actualTask: taskType;
+  subTaskList: SubTaskType[];
+  focused: boolean;
+  index: number;
+  setTaskList: React.Dispatch<React.SetStateAction<taskType[]>>;
+};
 
-const AddModalTaskItem = ({ item, focused, index }) => {
+const AddModalTaskItem = ({
+  actualTask,
+  subTaskList,
+  focused,
+  index,
+  setTaskList,
+}: AddModalTaskItemType) => {
   const [openSubtask, setOpenSubtask] = useState(false);
   const [dropDown, setDropDown] = useState(false);
-  const [subTaskList, setSubTaskList] = useState<string[]>([]);
+  //   const [subTaskList, setSubTaskList] = useState<SubTaskType[]>([]);
   const [title, setTitle] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
-    setSubTaskList((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        title: title,
-        isComplete: false,
-        tasks: [],
-        isSubtask: false,
-      },
-    ]);
+    // setSubTaskList((prev) => [
+    //   ...prev,
+    //   {
+    //     id: uuidv4(),
+    //     title: title,
+    //     isComplete: false,
+    //     isSubtask: false,
+    //   },
+    // ]);
+
+    console.log("item.id", actualTask.id);
+    setTaskList((prev: taskType[]): any => {
+      console.log("prev", prev);
+      return prev.map((task) => {
+        if (task.id === actualTask.id) {
+          // Update the tasklist for the specific object
+          return {
+            ...task,
+            isSubtask: true,
+            subTaskList: [
+              ...task.subTaskList,
+              {
+                id: uuidv4(),
+                title: title,
+                isComplete: false,
+                isSubtask: true,
+              },
+            ],
+          };
+        } else {
+          return task;
+        }
+      });
+    });
+
     setTitle("");
   };
+  console.log("actualTask", actualTask);
+  console.log("actualTask.subTaskList", actualTask.subTaskList);
+  console.log("actualTask.subTaskList.length", actualTask.subTaskList.length);
   console.log("subTaskList", subTaskList);
-  console.log("item.title", item.title);
+  console.log("subTaskList?.length", subTaskList?.length);
   return (
     <div
       className={`${
-        openSubtask && subTaskList.length > 0
+        openSubtask && actualTask.subTaskList?.length > 0
           ? "border-2 shadow-xs rounded-md bg-gray-200"
           : ""
       } `}
     >
       <div
-        key={item.id}
+        key={actualTask.id}
         className="flex gap-1 item-center justify-between w-full border-b-2"
       >
         <div className="flex gap-2 p-1">
@@ -82,7 +103,7 @@ const AddModalTaskItem = ({ item, focused, index }) => {
             <FaRegTrashAlt />
           </button>{" "}
           <h1 className=" w-[70%]">
-            <strong className="mr-1">{index}. </strong> {item.title}
+            <strong className="mr-1">{index}. </strong> {actualTask.title}
           </h1>
         </div>
 
@@ -98,7 +119,7 @@ const AddModalTaskItem = ({ item, focused, index }) => {
         {/* </button>  */}
         {/* */}
 
-        {subTaskList.length > 0 ? (
+        {actualTask.subTaskList?.length > 0 ? (
           <button
             onClick={() => setDropDown((prev) => !prev)}
             className="  bg-opacity-50 text-gray-600 text-md p-1 rounded-md mr-1  "
@@ -121,13 +142,10 @@ const AddModalTaskItem = ({ item, focused, index }) => {
         {dropDown && (
           <>
             <div className="flex flex-col gap-1">
-              {subTaskList?.map((item, index) => (
+              {actualTask.subTaskList?.map((item, index) => (
                 //   <AddModalTaskItem key={item.id} item={item} />
-                <div className="pl-8">
-                  <div
-                    key={item.id}
-                    className="flex gap-1 item-center justify-between w-full border-b  border-white "
-                  >
+                <div className="pl-8" key={item.id}>
+                  <div className="flex gap-1 item-center justify-between w-full border-b  border-white ">
                     <div className="flex gap-2 p-1">
                       <button className="  bg-opacity-50 text-gray-400 text-md  rounded-md  ">
                         <FaRegTrashAlt />
